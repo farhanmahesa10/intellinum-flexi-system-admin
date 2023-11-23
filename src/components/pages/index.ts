@@ -1,3 +1,3 @@
-import CompanyVision from "./CompanyVision";
+import TabMenu from "./TabMenu";
 
-export { CompanyVision };
+export { TabMenu };

@@ -8,7 +8,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { CompanyVision } from "./components/pages";
+import { TabMenu } from "./components/pages";
 export default function Root(props) {
   return (
     <ConfigProvider theme={{ token: themeToken }}>
@@ -27,16 +27,9 @@ const App = () => {
       navigate={navigate}
       pageContent={
         <>
-          <Layout>
-            <Content style={{ minHeight: 280 }}>
-              <Routes>
-                <Route
-                  path="/system/company-vision"
-                  element={<CompanyVision />}
-                />
-              </Routes>
-            </Content>
-          </Layout>
+          <Routes>
+            <Route path="/system/:activetab" element={<TabMenu />} />
+          </Routes>
         </>
       }
     />
