@@ -20,6 +20,7 @@ export default function Root(props) {
 const { Header, Footer, Sider, Content } = Layout;
 const App = () => {
   const navigate = useNavigate();
+  //
   return (
     <PageLayout
       navigate={navigate}
