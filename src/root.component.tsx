@@ -8,6 +8,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
+import { CompanyVision } from "./components/pages";
 export default function Root(props) {
   return (
     <ConfigProvider theme={{ token: themeToken }}>
@@ -31,7 +32,7 @@ const App = () => {
               <Routes>
                 <Route
                   path="/system/company-vision"
-                  element={<>This is company vision flexa admin system</>}
+                  element={<CompanyVision />}
                 />
               </Routes>
             </Content>
