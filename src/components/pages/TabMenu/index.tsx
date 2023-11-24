@@ -7,7 +7,7 @@ import TabPane from "antd/es/tabs/TabPane";
 import { themeToken, useGlobalContext } from "@intellinum/flexa-util";
 import { Toaster } from "react-hot-toast";
 import { FaDynamicIcons } from "../../atoms";
-import { CompanyVision } from "../../organisms";
+import { CompanyVision, Workflow, Workflow2 } from "../../organisms";
 type Props = {
   isDarkMode: boolean;
   location: any;
@@ -23,6 +23,8 @@ const TabMenu = (props: any) => {
     (activeTab) => {
       switch (activeTab.split(" ").join("-").toLowerCase()) {
         case "company-vision":
+          return <Workflow2 />;
+        case "Workflow":
           return <CompanyVision />;
 
         default:

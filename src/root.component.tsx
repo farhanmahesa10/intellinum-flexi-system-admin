@@ -9,6 +9,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { TabMenu } from "./components/pages";
+import "./app.css";
 export default function Root(props) {
   return (
     <ConfigProvider theme={{ token: themeToken }}>
