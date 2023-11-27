@@ -1,687 +1,115 @@
-import { useState, useRef } from "react";
-import { BlocklyWorkspace, useBlocklyWorkspace } from "react-blockly";
-import * as Blockly from "blockly/core";
-import { javascriptGenerator } from "blockly/javascript";
-import "../../moleculs/customblocks";
-
-// Blockly.JavaScript["print_to_console"] = function (block) {
-//   var value_text = Blockly.JavaScript.valueToCode(
-//     block,
-//     "TEXT",
-//     Blockly.JavaScript.ORDER_ATOMIC
-//   );
-//   // Implementasi logika mencetak ke konsol
-//   var code = "console.log(" + value_text + ");\n";
-//   return code;
-// };
-
+import { useMemo, useState } from "react";
+import { WorkflowModal } from "../../moleculs";
+import moment from "moment";
+import { Popconfirm, Space } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
+// @ts-ignore
+import * as Utils from "@intellinum/flexa-util";
+import { useFormik } from "formik";
+const { ModalDraggable, Config, callApi, TableAntd } = Utils;
 type Props = {};
 
 const Workflow = (props: Props) => {
-  const [xml, setXml] = useState<any>();
+  const [userId, setId] = useState(0);
+  const [mode, setMode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetch, setFetch] = useState(true);
+  const [searchUrl, setSearchUrl] = useState(
+    Config.prefixUrl + "/common/company/"
+  );
+  const [apiUrl, setapiUrl] = useState(Config.prefixUrl + "/common/");
+  const [open, setOpen] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
 
-  var toolbox = {
-    kind: "categoryToolbox",
-    contents: [
+  const handleEdit = (id) => {};
+  const handleDelete = (id) => {};
+  const columns = useMemo(
+    () => [
       {
-        kind: "category",
-        name: "Logic",
-        colour: 210,
-        contents: [
-          {
-            kind: "block",
-            type: "controls_if",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '<block type="logic_compare"><field name="OP">EQ</field></block>',
-          },
-          {
-            kind: "block",
-            blockxml:
-              '<block type="logic_operation"><field name="OP">AND</field></block>',
-          },
-          {
-            kind: "block",
-            type: "logic_negate",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '<block type="logic_boolean"><field name="BOOL">TRUE</field></block>',
-          },
-          {
-            kind: "block",
-            type: "logic_null",
-          },
-          {
-            kind: "block",
-            type: "logic_ternary",
-          },
-        ],
+        title: "ID",
+        dataIndex: "id",
       },
       {
-        kind: "category",
-        name: "Loops",
-        colour: 120,
-        contents: [
-          {
-            kind: "block",
-            blockxml:
-              '<block type="controls_repeat_ext">\n' +
-              '      <value name="TIMES">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">10</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="controls_whileUntil">\n' +
-              '      <field name="MODE">WHILE</field>\n' +
-              "    </block>",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="controls_for">\n' +
-              '      <field name="VAR" id="C(8;cYCF}~vSgkxzJ+{O" variabletype="">i</field>\n' +
-              '      <value name="FROM">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">1</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="TO">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">10</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="BY">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">1</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="controls_forEach">\n' +
-              '      <field name="VAR" id="Cg!CSk/ZJo2XQN3=VVrz" variabletype="">j</field>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="controls_flow_statements">\n' +
-              '      <field name="FLOW">BREAK</field>\n' +
-              "    </block>\n",
-          },
-        ],
+        title: "Name",
+        dataIndex: "name",
       },
       {
-        kind: "category",
-        name: "Math",
-        colour: 230,
-        contents: [
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_round">\n' +
-              '      <field name="OP">ROUND</field>\n' +
-              '      <value name="NUM">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">3.1</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_number">\n' +
-              '      <field name="NUM">0</field>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_single">\n' +
-              '      <field name="OP">ROOT</field>\n' +
-              '      <value name="NUM">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">9</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_trig">\n' +
-              '      <field name="OP">SIN</field>\n' +
-              '      <value name="NUM">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">45</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_constant">\n' +
-              '      <field name="CONSTANT">PI</field>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_number_property">\n' +
-              '      <mutation divisor_input="false"></mutation>\n' +
-              '      <field name="PROPERTY">EVEN</field>\n' +
-              '      <value name="NUMBER_TO_CHECK">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">0</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_arithmetic">\n' +
-              '      <field name="OP">ADD</field>\n' +
-              '      <value name="A">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">1</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="B">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">1</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_on_list">\n' +
-              '      <mutation op="SUM"></mutation>\n' +
-              '      <field name="OP">SUM</field>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_modulo">\n' +
-              '      <value name="DIVIDEND">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">64</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="DIVISOR">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">10</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_constrain">\n' +
-              '      <value name="VALUE">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">50</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="LOW">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">1</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="HIGH">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">100</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="math_random_int">\n' +
-              '      <value name="FROM">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">1</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="TO">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">100</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            type: "math_random_float",
-          },
-        ],
+        title: "Program language",
+        dataIndex: "address",
       },
       {
-        kind: "category",
-        name: "Text",
-        colour: 160,
-        contents: [
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_charAt">\n' +
-              '      <mutation at="true"></mutation>\n' +
-              '      <field name="WHERE">FROM_START</field>\n' +
-              '      <value name="VALUE">\n' +
-              '        <block type="variables_get">\n' +
-              '          <field name="VAR" id="q@$ZF(L?Zo/z`d{o.Bp!" variabletype="">text</field>\n' +
-              "        </block>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text">\n' +
-              '      <field name="TEXT"></field>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_append">\n' +
-              '      <field name="VAR" id=":};P,s[*|I8+L^-.EbRi" variabletype="">item</field>\n' +
-              '      <value name="TEXT">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT"></field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_length">\n' +
-              '      <value name="VALUE">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT">abc</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_isEmpty">\n' +
-              '      <value name="VALUE">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT"></field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_indexOf">\n' +
-              '      <field name="END">FIRST</field>\n' +
-              '      <value name="VALUE">\n' +
-              '        <block type="variables_get">\n' +
-              '          <field name="VAR" id="q@$ZF(L?Zo/z`d{o.Bp!" variabletype="">text</field>\n' +
-              "        </block>\n" +
-              "      </value>\n" +
-              '      <value name="FIND">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT">abc</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_join">\n' +
-              '      <mutation items="2"></mutation>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_getSubstring">\n' +
-              '      <mutation at1="true" at2="true"></mutation>\n' +
-              '      <field name="WHERE1">FROM_START</field>\n' +
-              '      <field name="WHERE2">FROM_START</field>\n' +
-              '      <value name="STRING">\n' +
-              '        <block type="variables_get">\n' +
-              '          <field name="VAR" id="q@$ZF(L?Zo/z`d{o.Bp!" variabletype="">text</field>\n' +
-              "        </block>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_changeCase">\n' +
-              '      <field name="CASE">UPPERCASE</field>\n' +
-              '      <value name="TEXT">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT">abc</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_trim">\n' +
-              '      <field name="MODE">BOTH</field>\n' +
-              '      <value name="TEXT">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT">abc</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_print">\n' +
-              '      <value name="TEXT">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT">abc</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="text_prompt_ext">\n' +
-              '      <mutation type="TEXT"></mutation>\n' +
-              '      <field name="TYPE">TEXT</field>\n' +
-              '      <value name="TEXT">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT">abc</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-        ],
+        title: "Script",
+        dataIndex: "script",
       },
+
       {
-        kind: "category",
-        name: "Lists",
-        colour: 259,
-        contents: [
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_indexOf">\n' +
-              '      <field name="END">FIRST</field>\n' +
-              '      <value name="VALUE">\n' +
-              '        <block type="variables_get">\n' +
-              '          <field name="VAR" id="e`(L;x,.j[[XN`F33Q5." variabletype="">list</field>\n' +
-              "        </block>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_create_with">\n' +
-              '      <mutation items="0"></mutation>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_repeat">\n' +
-              '      <value name="NUM">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">5</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            type: "lists_length",
-          },
-          {
-            kind: "block",
-            type: "lists_isEmpty",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_create_with">\n' +
-              '      <mutation items="3"></mutation>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_getIndex">\n' +
-              '      <mutation statement="false" at="true"></mutation>\n' +
-              '      <field name="MODE">GET</field>\n' +
-              '      <field name="WHERE">FROM_START</field>\n' +
-              '      <value name="VALUE">\n' +
-              '        <block type="variables_get">\n' +
-              '          <field name="VAR" id="e`(L;x,.j[[XN`F33Q5." variabletype="">list</field>\n' +
-              "        </block>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_setIndex">\n' +
-              '      <mutation at="true"></mutation>\n' +
-              '      <field name="MODE">SET</field>\n' +
-              '      <field name="WHERE">FROM_START</field>\n' +
-              '      <value name="LIST">\n' +
-              '        <block type="variables_get">\n' +
-              '          <field name="VAR" id="e`(L;x,.j[[XN`F33Q5." variabletype="">list</field>\n' +
-              "        </block>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_getSublist">\n' +
-              '      <mutation at1="true" at2="true"></mutation>\n' +
-              '      <field name="WHERE1">FROM_START</field>\n' +
-              '      <field name="WHERE2">FROM_START</field>\n' +
-              '      <value name="LIST">\n' +
-              '        <block type="variables_get">\n' +
-              '          <field name="VAR" id="e`(L;x,.j[[XN`F33Q5." variabletype="">list</field>\n' +
-              "        </block>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_split">\n' +
-              '      <mutation mode="SPLIT"></mutation>\n' +
-              '      <field name="MODE">SPLIT</field>\n' +
-              '      <value name="DELIM">\n' +
-              '        <shadow type="text">\n' +
-              '          <field name="TEXT">,</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="lists_sort">\n' +
-              '      <field name="TYPE">NUMERIC</field>\n' +
-              '      <field name="DIRECTION">1</field>\n' +
-              "    </block>\n",
-          },
-        ],
-      },
-      {
-        kind: "category",
-        name: "Colour",
-        colour: 19,
-        contents: [
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="colour_picker">\n' +
-              '      <field name="COLOUR">#ff0000</field>\n' +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            type: "colour_random",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="colour_rgb">\n' +
-              '      <value name="RED">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">100</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="GREEN">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">50</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="BLUE">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">0</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-          {
-            kind: "block",
-            blockxml:
-              '    <block type="colour_blend">\n' +
-              '      <value name="COLOUR1">\n' +
-              '        <shadow type="colour_picker">\n' +
-              '          <field name="COLOUR">#ff0000</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="COLOUR2">\n' +
-              '        <shadow type="colour_picker">\n' +
-              '          <field name="COLOUR">#3333ff</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              '      <value name="RATIO">\n' +
-              '        <shadow type="math_number">\n' +
-              '          <field name="NUM">0.5</field>\n' +
-              "        </shadow>\n" +
-              "      </value>\n" +
-              "    </block>\n",
-          },
-        ],
-      },
-      { kind: "sep" },
-      {
-        kind: "category",
-        name: "Variables",
-        custom: "VARIABLE",
-        colour: 330,
-      },
-      {
-        kind: "category",
-        name: "Functions",
-        custom: "PROCEDURE",
-        colour: 290,
-      },
-      {
-        kind: "category",
-        name: "Custom",
-        colour: "#5CA699",
-        contents: [
-          {
-            kind: "block",
-            type: "test_react_field",
-          },
-        ],
+        title: "Action",
+        key: "action",
+        render: (row) => (
+          <Space size="middle">
+            <div
+              onClick={() => {
+                handleEdit(row);
+              }}
+            >
+              <span title="Edit">
+                {" "}
+                <EditOutlined />
+              </span>
+            </div>
+            <Popconfirm
+              title={<span className="ms-2">Delete the task</span>}
+              description={
+                <span className="ms-2">Are you sure to delete this data?</span>
+              }
+              okText="Yes"
+              cancelText="No"
+              icon={<AiOutlineQuestionCircle style={{ color: "red" }} />}
+              onConfirm={() => {
+                handleDelete(row);
+              }}
+            >
+              <span title="Delete" style={{ cursor: "pointer" }}>
+                <DeleteOutlined />
+              </span>
+            </Popconfirm>
+          </Space>
+        ),
       },
     ],
-  };
-  const blocklyRef = useRef(null);
-
-  const blocklyHook: any = useBlocklyWorkspace;
-
-  const { workspace } = blocklyHook({
-    ref: blocklyRef,
-    toolboxConfiguration: toolbox, // this must be a JSON toolbox definition
-    initialXml: xml,
-    onWorkspaceChange: workspaceDidChange,
-    // onXmlChange={setXml}
+    [handleDelete, handleEdit]
+  );
+  const searchSection = "";
+  const formik = useFormik({
+    initialValues: {},
+    onSubmit: () => {},
   });
-  const [javascriptCode, setJavascriptCode] = useState("");
-  function workspaceDidChange(workspace) {
-    console.log("workspace changes", workspace);
-
-    const code = javascriptGenerator.workspaceToCode(workspace);
-    setJavascriptCode(code);
-  }
-
-  function runCode() {
-    // Generate JavaScript code and run it.
-
-    let code: any = document.getElementById("code");
-    code = code.value;
-    javascriptGenerator.INFINITE_LOOP_TRAP =
-      'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
-    javascriptGenerator.INFINITE_LOOP_TRAP = null;
-    try {
-      eval(code);
-      console.log(code);
-    } catch (e) {
-      alert(e);
-    }
-  }
+  const showModalNew = () => {
+    setMode("new");
+    formik.resetForm();
+    setIsLoading(false);
+    setOpen(true);
+  };
   return (
     <>
-      <button onClick={runCode}>Run Code</button>
-      <BlocklyWorkspace
-        className="h-600 w-100" // you can use whatever classes are appropriate for your app's CSS
-        toolboxConfiguration={toolbox} // this must be a JSON toolbox definition
-        initialXml={xml}
-        onXmlChange={setXml}
-        workspaceConfiguration={{
-          grid: {
-            spacing: 20,
-            length: 3,
-            colour: "#ccc",
-            snap: true,
-          },
-        }}
-        onWorkspaceChange={workspaceDidChange}
+      <WorkflowModal open={open} setOpen={setOpen} formik={formik} />
+      <TableAntd
+        title="Company"
+        columns={columns}
+        searchUrl={searchUrl}
+        loading={tableLoading}
+        setLoading={setTableLoading}
+        useCard={true}
+        apiUrl={apiUrl}
+        readonly={false}
+        targetNew="#dataModal"
+        targetEdit="#dataModal"
+        searchSection={searchSection}
+        showModal={showModalNew}
+        fetch={fetch}
+        setFetch={setFetch}
       />
-      <pre id="generated-xml">{xml}</pre>
-      <textarea
-        id="code"
-        style={{ height: "200px", width: "400px" }}
-        value={javascriptCode}
-        readOnly
-      ></textarea>
-      {/* <div ref={blocklyRef} className="w-100 h-600" /> */}
     </>
   );
 };

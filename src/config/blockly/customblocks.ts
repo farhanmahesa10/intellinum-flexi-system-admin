@@ -1,10 +1,9 @@
 import * as Blockly from "blockly/core";
 
-// Since we're using json to initialize the field, we'll need to import it.
-
 const testReactField = {
-  type: "test_react_field",
-  message0: "custom field %1",
+  type: "print_to_console",
+  message0: "print_to_console %1",
+
   args0: [
     {
       type: "field_react_component",
@@ -16,9 +15,10 @@ const testReactField = {
   nextStatement: null,
 };
 
-Blockly.Blocks["test_react_field"] = {
+Blockly.Blocks["print_to_console"] = {
   init: function () {
     this.jsonInit(testReactField);
     this.setStyle("loop_blocks");
+    this.setOutput(true, "Number");
   },
 };
