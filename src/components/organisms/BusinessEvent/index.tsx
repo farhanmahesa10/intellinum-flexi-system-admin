@@ -2,7 +2,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import { WorkflowModal } from "../../moleculs";
+import { BusinessEventModal } from "../../moleculs";
 // @ts-ignore
 import * as Utils from "@intellinum/flexa-util";
 import { useFormik } from "formik";
@@ -12,16 +12,16 @@ import toast, { Toaster } from "react-hot-toast";
 const { ModalDraggable, Config, callApi, TableAntd } = Utils;
 type Props = {};
 
-const Workflow = (props: Props) => {
+const BusinessEvent = (props: Props) => {
   const [actionId, setActionId] = useState(null);
   const [mode, setMode] = useState("New");
   const [isLoading, setIsLoading] = useState(false);
   const [fetch, setFetch] = useState(true);
   const [searchUrl, setSearchUrl] = useState(
-    Config.prefixUrl + "/messaging/workflow/search"
+    Config.prefixUrl + "/messaging/businessevent/search"
   );
   const [apiUrl, setapiUrl] = useState(
-    Config.prefixUrl + "/messaging/workflow"
+    Config.prefixUrl + "/messaging/businessevent"
   );
   const [open, setOpen] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
@@ -41,7 +41,10 @@ const Workflow = (props: Props) => {
   const handleDelete = useCallback(async (id) => {
     setIsLoading(true);
     try {
-      await callApi(Config.prefixUrl + "/messaging/workflow/" + id, "DELETE");
+      await callApi(
+        Config.prefixUrl + "/messaging/businessevent/" + id,
+        "DELETE"
+      );
       setFetch(true);
       setOpen(false);
       toast.success("Data has been deleted!");
@@ -158,14 +161,14 @@ const Workflow = (props: Props) => {
       try {
         if (mode === "New") {
           await callApi(
-            Config.prefixUrl + "/messaging/workflow",
+            Config.prefixUrl + "/messaging/businessevent",
             "POST",
             value
           );
           toast.success("New data has been added!");
         } else {
           await callApi(
-            Config.prefixUrl + "/messaging/workflow/" + actionId,
+            Config.prefixUrl + "/messaging/businessevent/" + actionId,
             "PUT",
             value
           );
@@ -207,7 +210,7 @@ const Workflow = (props: Props) => {
   return (
     <>
       <Toaster />
-      <WorkflowModal
+      <BusinessEventModal
         mode={mode}
         isLoading={isLoading}
         open={open}
@@ -215,7 +218,7 @@ const Workflow = (props: Props) => {
         formik={formik}
       />
       <TableAntd
-        title="Workflow"
+        title="Business Event"
         loading={tableLoading}
         setLoading={setTableLoading}
         columns={columns}
@@ -234,4 +237,4 @@ const Workflow = (props: Props) => {
   );
 };
 
-export default Workflow;
+export default BusinessEvent;

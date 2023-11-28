@@ -1,12 +1,21 @@
-import { Button, Form, Input, Modal, Space, Switch, Typography } from "antd";
-import React, { useEffect, useState, useMemo } from "react";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Switch,
+  Typography,
+} from "antd";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { BlocklyWorkspace } from "react-blockly";
 import { blocklyToolbox } from "../../../config/blockly/blocklySetup";
 import { javascriptGenerator } from "blockly/javascript";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 // @ts-ignore
 import * as Utils from "@intellinum/flexa-util";
-const { CustomSelect, Config } = Utils;
+const { CustomSelect, Config, callApi } = Utils;
 type Props = {
   open: boolean;
   isLoading: boolean;
@@ -15,11 +24,23 @@ type Props = {
   mode: string;
 };
 
-const WorkflowModal = (props: Props) => {
+const BusinessEventModal = (props: Props) => {
   const [javascriptCode, setJavascriptCode] = useState("");
   const { open, setOpen, formik, isLoading, mode } = props;
   const [xml, setXml] = useState("");
   const [showBlockly, setShowBlockly] = useState(false);
+  const [workFlowData, setWorkFlowData] = useState([]);
+  const [isWorkFlowLoading, setIsWorkFlowLoading] = useState(false);
+  const [workflowKeyword, setWorkflowKeyword] = useState("");
+
+  const workflowOption = useMemo(() => {
+    return workFlowData.map((r: any) => {
+      return {
+        label: r.name,
+        value: r.id,
+      };
+    });
+  }, [workFlowData]);
 
   const handleWorkSpaceChange = (workspace) => {
     const code = javascriptGenerator.workspaceToCode(workspace);
@@ -42,11 +63,37 @@ const WorkflowModal = (props: Props) => {
     formik.setFieldValue("script", javascriptCode);
   }, [javascriptCode]);
 
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      handleSearchWorkFlow();
+    }, 1000);
+
+    return () => clearTimeout(getData);
+  }, [workflowKeyword]);
+
+  const handleSearchWorkFlow = useCallback(async () => {
+    let user = JSON.parse(localStorage.getItem("flexa_auth"));
+    const companyId = user.company?.id;
+    console.log("workflowKeyword", workflowKeyword);
+
+    try {
+      const result = await callApi(
+        `${Config.prefixUrl}/messaging/workflow/search?company=${companyId}&value=${workflowKeyword}&pageNumber=0&size=10`,
+        "GET"
+      );
+
+      setWorkFlowData(result.data.content);
+    } catch (error) {
+      console.log("error", error);
+    }
+  }, [workflowKeyword]);
+  console.log(workFlowData);
+
   return (
     <div>
       <Modal
-        title={mode + " workflow"}
-        open={open}
+        title={mode + " business event"}
+        open={true}
         width={1200}
         centered
         onCancel={() => setOpen(false)}
@@ -76,26 +123,21 @@ const WorkflowModal = (props: Props) => {
                   </Typography.Text>
                 ) : null}
               </Form.Item>
-
-              <Form.Item label="Company" required className="w-100 mb-0">
-                <CustomSelect
-                  apiUrl={Config.prefixUrl + "/common/company"}
-                  field={formik.getFieldProps("company")}
-                  form={formik}
-                  label="Company"
-                  status={
-                    formik.touched.company && formik.errors.company
-                      ? "error"
-                      : null
-                  }
+              <Form.Item label="Workflow" required className="w-100">
+                <Select
+                  showSearch
+                  placeholder="Search to Select Workflow"
+                  optionFilterProp="children"
+                  onSearch={(val) => {
+                    setWorkflowKeyword(val);
+                  }}
+                  dropdownRender={(menu) => {
+                    return <>{workFlowData.length ? menu : "kosong"}</>;
+                  }}
+                  options={workflowOption}
                 />
-                {formik.touched.company && formik.errors.company ? (
-                  <p style={{ marginTop: "-20px", color: "#ff0000" }}>
-                    {" "}
-                    {formik.errors.company}
-                  </p>
-                ) : null}
               </Form.Item>
+
               <Form.Item label="Active" required className="w-100 mb-0">
                 <Switch
                   checked={formik.values.isActive}
@@ -171,4 +213,4 @@ const WorkflowModal = (props: Props) => {
   );
 };
 
-export default WorkflowModal;
+export default BusinessEventModal;

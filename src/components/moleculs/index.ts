@@ -1,2 +1,3 @@
 import WorkflowModal from "./Modals/WorkFlowModal";
-export { WorkflowModal };
+import BusinessEventModal from "./Modals/BusinessEventModal";
+export { WorkflowModal, BusinessEventModal };
