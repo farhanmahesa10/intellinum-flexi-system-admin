@@ -140,10 +140,11 @@ const WorkflowModal = (props: Props) => {
                   // style={{ height: "100%" }}
                   style={{
                     height: "100%",
+                    maxHeight: "500px",
                     minWidth: "250px",
                     fontSize: 12,
                     // backgroundColor: "#ddd",
-                    overflow: "scroll",
+                    overflowY: "auto",
                     fontFamily:
                       "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                   }}

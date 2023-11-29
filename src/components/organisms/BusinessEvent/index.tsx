@@ -27,13 +27,11 @@ const BusinessEvent = (props: Props) => {
   const [tableLoading, setTableLoading] = useState(false);
 
   const handleEdit = (value) => {
-    formik.setFieldValue("xml", value.xml);
     setMode("Edit");
     setActionId(value.id);
     formik.setFieldValue("name", value.name);
     formik.setFieldValue("company", value.company);
-    formik.setFieldValue("type", value.type);
-    formik.setFieldValue("script", value.script);
+    formik.setFieldValue("workflow", value.workflow);
     formik.setFieldValue("isActive", value.isActive);
     setOpen(true);
   };
@@ -64,10 +62,7 @@ const BusinessEvent = (props: Props) => {
         title: "Name",
         dataIndex: "name",
       },
-      {
-        title: "Type",
-        dataIndex: "type",
-      },
+
       {
         title: "Active",
         dataIndex: "isActive",
@@ -82,7 +77,7 @@ const BusinessEvent = (props: Props) => {
         render: (row, record) => {
           return (
             <CodeEditor
-              value={record.script}
+              value={record.workflow.script}
               data-color-mode="dark"
               language="js"
               readOnly
@@ -151,12 +146,12 @@ const BusinessEvent = (props: Props) => {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("This field is required"),
-    company: Yup.string().required("This field is required"),
-    script: Yup.string().required("This field is required"),
+    workflow: Yup.object().required("This field is required"),
   });
 
   const handleSubmit = useCallback(
     async (value, setSubmitting) => {
+      value = { ...value, company: value.workflow.company };
       setIsLoading(true);
       try {
         if (mode === "New") {
@@ -190,11 +185,8 @@ const BusinessEvent = (props: Props) => {
     enableReinitialize: true,
     initialValues: {
       name: "",
-      company: "",
-      type: "Javascript",
-      xml: "",
+      workflow: null,
       isActive: 1,
-      script: "",
     },
     onSubmit: (values, { setSubmitting }) => {
       handleSubmit(values, setSubmitting);

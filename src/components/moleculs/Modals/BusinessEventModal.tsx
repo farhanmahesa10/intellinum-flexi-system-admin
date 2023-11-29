@@ -13,6 +13,7 @@ import { BlocklyWorkspace } from "react-blockly";
 import { blocklyToolbox } from "../../../config/blockly/blocklySetup";
 import { javascriptGenerator } from "blockly/javascript";
 import CodeEditor from "@uiw/react-textarea-code-editor";
+import AsyncSelect from "react-select/async";
 // @ts-ignore
 import * as Utils from "@intellinum/flexa-util";
 const { CustomSelect, Config, callApi } = Utils;
@@ -27,20 +28,9 @@ type Props = {
 const BusinessEventModal = (props: Props) => {
   const [javascriptCode, setJavascriptCode] = useState("");
   const { open, setOpen, formik, isLoading, mode } = props;
-  const [xml, setXml] = useState("");
   const [showBlockly, setShowBlockly] = useState(false);
-  const [workFlowData, setWorkFlowData] = useState([]);
-  const [isWorkFlowLoading, setIsWorkFlowLoading] = useState(false);
-  const [workflowKeyword, setWorkflowKeyword] = useState("");
 
-  const workflowOption = useMemo(() => {
-    return workFlowData.map((r: any) => {
-      return {
-        label: r.name,
-        value: r.id,
-      };
-    });
-  }, [workFlowData]);
+  const [workFlowSelected, setWorkFlowSelected] = useState<any>();
 
   const handleWorkSpaceChange = (workspace) => {
     const code = javascriptGenerator.workspaceToCode(workspace);
@@ -60,40 +50,58 @@ const BusinessEventModal = (props: Props) => {
   }, [open]);
 
   useEffect(() => {
+    if (mode === "Edit") {
+      setWorkFlowSelected({
+        label: formik.values.workflow?.name,
+        value: formik.values.workflow?.id,
+        data: formik.values.workflow,
+      });
+    } else {
+      setWorkFlowSelected(null);
+    }
+  }, [mode, open]);
+
+  useEffect(() => {
     formik.setFieldValue("script", javascriptCode);
   }, [javascriptCode]);
 
-  useEffect(() => {
-    const getData = setTimeout(() => {
-      handleSearchWorkFlow();
-    }, 1000);
-
-    return () => clearTimeout(getData);
-  }, [workflowKeyword]);
-
-  const handleSearchWorkFlow = useCallback(async () => {
+  const handleSearchWorkFlow = useCallback(async (keyword) => {
     let user = JSON.parse(localStorage.getItem("flexa_auth"));
     const companyId = user.company?.id;
-    console.log("workflowKeyword", workflowKeyword);
-
+    let data = [];
     try {
       const result = await callApi(
-        `${Config.prefixUrl}/messaging/workflow/search?company=${companyId}&value=${workflowKeyword}&pageNumber=0&size=10`,
+        `${Config.prefixUrl}/messaging/workflow/search?company=${companyId}&value=${keyword}&pageNumber=0&size=10`,
         "GET"
       );
 
-      setWorkFlowData(result.data.content);
+      data = result.data.content.map((r: any) => {
+        return {
+          label: r.name,
+          value: r.id,
+          data: r,
+        };
+      });
     } catch (error) {
       console.log("error", error);
     }
-  }, [workflowKeyword]);
-  console.log(workFlowData);
+
+    return data;
+  }, []);
+  const loadOptions: any = async (
+    inputValue: string,
+    callback: (options: any) => void
+  ) => {
+    let data = await handleSearchWorkFlow(inputValue);
+
+    callback(data);
+  };
 
   return (
     <div>
       <Modal
         title={mode + " business event"}
-        open={true}
+        open={open}
         width={1200}
         centered
         onCancel={() => setOpen(false)}
@@ -108,7 +116,7 @@ const BusinessEventModal = (props: Props) => {
         >
           <div style={{ padding: "20px" }}>
             <Space.Compact className="w-100 gap-4 mb-0">
-              <Form.Item label="Name" required className="w-100 mb-0">
+              <Form.Item label="Name" required className="w-100 mb-0 ">
                 <Input
                   id="name"
                   {...formik.getFieldProps("name")}
@@ -116,6 +124,7 @@ const BusinessEventModal = (props: Props) => {
                   status={
                     formik.touched.name && formik.errors.name ? "error" : null
                   }
+                  style={{ height: "36px" }}
                 />
                 {formik.touched.name && formik.errors.name ? (
                   <Typography.Text type="danger">
@@ -124,18 +133,40 @@ const BusinessEventModal = (props: Props) => {
                 ) : null}
               </Form.Item>
               <Form.Item label="Workflow" required className="w-100">
-                <Select
-                  showSearch
-                  placeholder="Search to Select Workflow"
-                  optionFilterProp="children"
-                  onSearch={(val) => {
-                    setWorkflowKeyword(val);
+                <AsyncSelect
+                  cacheOptions
+                  styles={{
+                    control: (provided, state) => ({
+                      ...provided,
+
+                      borderColor:
+                        formik.touched.workflow && formik.errors.workflow
+                          ? "red"
+                          : provided.borderColor,
+                      boxShadow: "none",
+                    }),
                   }}
-                  dropdownRender={(menu) => {
-                    return <>{workFlowData.length ? menu : "kosong"}</>;
+                  loadOptions={loadOptions}
+                  value={workFlowSelected}
+                  placeholder="Type to search workflow"
+                  onChange={(val: any) => {
+                    console.log(val);
+                    setShowBlockly(false);
+                    formik.setFieldValue("workflow", val.data);
+                    setWorkFlowSelected(val);
+                    setTimeout(() => {
+                      setShowBlockly(true);
+                    }, 300);
                   }}
-                  options={workflowOption}
+                  noOptionsMessage={(val) => {
+                    return !val.inputValue ? "Search something" : "No Option";
+                  }}
                 />
+                {formik.touched.workflow && formik.errors.workflow ? (
+                  <Typography.Text type="danger">
+                    {formik.errors.workflow}
+                  </Typography.Text>
+                ) : null}
               </Form.Item>
 
               <Form.Item label="Active" required className="w-100 mb-0">
@@ -152,46 +183,50 @@ const BusinessEventModal = (props: Props) => {
               </Form.Item>
             </Space.Compact>
 
-            <div className="d-flex w-100 gap-3 ">
-              <div className="w-100">
-                {showBlockly && (
-                  <BlocklyWorkspace
-                    className="h-600 " // you can use whatever classes are appropriate for your app's CSS
-                    toolboxConfiguration={blocklyToolbox} // this must be a JSON toolbox definition
-                    initialXml={formik.values.xml}
-                    onXmlChange={(val) => {
-                      formik.setFieldValue("xml", val);
-                      setXml(val);
+            {workFlowSelected ? (
+              <div className="d-flex w-100 gap-3 ">
+                <div className="w-100">
+                  {showBlockly && (
+                    <BlocklyWorkspace
+                      className="h-600 " // you can use whatever classes are appropriate for your app's CSS
+                      toolboxConfiguration={blocklyToolbox} // this must be a JSON toolbox definition
+                      initialXml={formik.values.workflow?.xml}
+                      onWorkspaceChange={handleWorkSpaceChange}
+                      workspaceConfiguration={{
+                        readOnly: true,
+                      }}
+                    />
+                  )}
+                  {formik.touched.script && formik.errors.script ? (
+                    <Typography.Text type="danger">
+                      {formik.errors.script}
+                    </Typography.Text>
+                  ) : null}
+                </div>
+                <div style={{ minHeight: "500px" }}>
+                  <CodeEditor
+                    value={javascriptCode}
+                    data-color-mode="dark"
+                    language="js"
+                    readOnly
+                    placeholder="Your javascript code will appear here"
+                    // style={{ height: "100%" }}
+                    style={{
+                      height: "100%",
+                      maxHeight: "500px",
+                      minWidth: "250px",
+                      fontSize: 12,
+                      // backgroundColor: "#ddd",
+                      overflowY: "auto",
+                      fontFamily:
+                        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                     }}
-                    onWorkspaceChange={handleWorkSpaceChange}
                   />
-                )}
-                {formik.touched.script && formik.errors.script ? (
-                  <Typography.Text type="danger">
-                    {formik.errors.script}
-                  </Typography.Text>
-                ) : null}
+                </div>
               </div>
-              <div style={{ minHeight: "500px" }}>
-                <CodeEditor
-                  value={javascriptCode}
-                  data-color-mode="dark"
-                  language="js"
-                  readOnly
-                  placeholder="Your javascript code will appear here"
-                  // style={{ height: "100%" }}
-                  style={{
-                    height: "100%",
-                    minWidth: "250px",
-                    fontSize: 12,
-                    // backgroundColor: "#ddd",
-                    overflow: "scroll",
-                    fontFamily:
-                      "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                  }}
-                />
-              </div>
-            </div>
+            ) : (
+              ""
+            )}
             <div className="d-flex justify-content-end mt-2">
               <Button type="primary" htmlType="submit" disabled={isLoading}>
                 {isLoading ? (
