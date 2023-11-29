@@ -80,7 +80,6 @@ const Workflow = (props: Props) => {
           return (
             <CodeEditor
               value={record.script}
-              data-color-mode="dark"
               language="js"
               readOnly
               placeholder="Your javascript code will appear here"
@@ -90,7 +89,7 @@ const Workflow = (props: Props) => {
                 minWidth: "250px",
                 maxHeight: "200px",
                 fontSize: 12,
-                // backgroundColor: "#ddd",
+                backgroundColor: "white",
                 overflowY: "auto",
                 fontFamily:
                   "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
@@ -169,7 +168,7 @@ const Workflow = (props: Props) => {
             "PUT",
             value
           );
-          toast.success("New data has been edited!");
+          toast.success("Data has been edited!");
         }
         setFetch(true);
         setOpen(false);

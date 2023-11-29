@@ -130,10 +130,11 @@ const WorkflowModal = (props: Props) => {
                   </Typography.Text>
                 ) : null}
               </div>
-              <div style={{ minHeight: "500px" }}>
+              <div
+                style={{ minHeight: "500px", border: "1px solid lightgray" }}
+              >
                 <CodeEditor
                   value={javascriptCode}
-                  data-color-mode="dark"
                   language="js"
                   readOnly
                   placeholder="Your javascript code will appear here"
@@ -143,7 +144,7 @@ const WorkflowModal = (props: Props) => {
                     maxHeight: "500px",
                     minWidth: "250px",
                     fontSize: 12,
-                    // backgroundColor: "#ddd",
+                    backgroundColor: "white",
                     overflowY: "auto",
                     fontFamily:
                       "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
