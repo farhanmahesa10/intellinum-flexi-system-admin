@@ -194,6 +194,7 @@ const BusinessEventModal = (props: Props) => {
                       onWorkspaceChange={handleWorkSpaceChange}
                       workspaceConfiguration={{
                         readOnly: true,
+                        scrollbars: true,
                       }}
                     />
                   )}

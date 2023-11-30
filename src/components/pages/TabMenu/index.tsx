@@ -7,7 +7,13 @@ import TabPane from "antd/es/tabs/TabPane";
 import { themeToken, useGlobalContext } from "@intellinum/flexa-util";
 import { Toaster } from "react-hot-toast";
 import { FaDynamicIcons } from "../../atoms";
-import { BusinessEvent, CompanyVision, Workflow } from "../../organisms";
+import {
+  BusinessEvent,
+  CompanyVision,
+  EventHandler,
+  EventLog,
+  Workflow,
+} from "../../organisms";
 type Props = {
   isDarkMode: boolean;
   location: any;
@@ -28,6 +34,10 @@ const TabMenu = (props: any) => {
           return <BusinessEvent />;
         case "workflow":
           return <Workflow />;
+        case "event-handler":
+          return <EventHandler />;
+        case "event-log":
+          return <EventLog />;
         default:
           return "";
       }
