@@ -600,7 +600,7 @@ const Blockly = (props: Props) => {
     <>
       <div style={{ padding: "20px" }}>
         <BlocklyWorkspace
-          className="h-600 " // you can use whatever classes are appropriate for your app's CSS
+          className="h-600 " // you can use whatever classes are appropriate for your app's CSS//
           toolboxConfiguration={toolboxCategories} // this must be a JSON toolbox definition
           initialXml={`<xml xmlns="https://developers.google.com/blockly/xml"><block type="controls_repeat_ext" id="F(nWC3HJWID7;U-]eeyX" x="99" y="53"><value name="TIMES"><shadow type="math_number" id="+pQq*vdkC#9uIRKL+;*Y"><field name="NUM">10</field></shadow></value></block></xml>`}
           onXmlChange={setXml}
