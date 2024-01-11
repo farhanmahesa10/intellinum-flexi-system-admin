@@ -591,15 +591,87 @@ const blocklyToolbox = {
     },
     {
       kind: "category",
-      name: "custom",
+      name: "Web Service",
       colour: 290,
       contents: [
+        // {
+        //   kind: "block",
+        //   blockxml:
+        //     '    <block type="print_to_console">\n' +
+        //     '      <field name="Name">Boundary Function Name</field>\n' +
+        //     '      <statement name="Content">\n' +
+        //     '        <block type="text"></block>\n' +
+        //     '      </statement>\n' +
+        //     '    </block>\n',
+        // },
+        // {
+        //   kind: "block",
+        //   blockxml: 
+        //   '<block type="api_block" id="1" x="50" y="50">\n' +
+        //     '  <value name="API_URL">\n' +
+        //     '    <block type="text">\n' +
+        //     '      <field name="TEXT">https://api.example.com</field>\n' +
+        //     '    </block>\n' +
+        //     '  </value>\n' +
+        //     '  <statement name="API_PARAMETERS">\n' +
+        //     '    <block type="api_parameter" id="2">\n' +
+        //     '      <value name="PARAM_NAME">\n' +
+        //     '        <block type="text">\n' +
+        //     '          <field name="TEXT">param1</field>\n' +
+        //     '        </block>\n' +
+        //     '      </value>\n' +
+        //     '      <value name="PARAM_VALUE">\n' +
+        //     '        <block type="text">\n' +
+        //     '          <field name="TEXT">value1</field>\n' +
+        //     '        </block>\n' +
+        //     '      </value>\n' +
+        //     '    </block>\n' +
+        //     '  </statement>\n' +
+        //     '  <statement name="API_HEADERS">\n' +
+        //     '    <block type="api_header" id="3">\n' +
+        //     '      <value name="HEADER_NAME">\n' +
+        //     '        <block type="text">\n' +
+        //     '          <field name="TEXT">Authorization</field>\n' +
+        //     '        </block>\n' +
+        //     '      </value>\n' +
+        //     '      <value name="HEADER_VALUE">\n' +
+        //     '        <block type="text">\n' +
+        //     '          <field name="TEXT">Bearer Token123</field>\n' +
+        //     '        </block>\n' +
+        //     '      </value>\n' +
+        //     '    </block>\n' +
+        //     '  </statement>\n' +
+        //   '</block>\n'
+        // },
         {
           kind: "block",
-          blockxml:
-            '    <block type="print_to_console">\n' +
-            '      <field name="COLOUR">#ff0000</field>\n' +
-            "    </block>\n",
+          blockxml: 
+          '<block type="api_block" id="1" x="50" y="50">\n' +
+            '  <value name="API_URL">\n' +
+            '  </value>\n' +
+            '  <value name="METHOD">\n' +
+            '  </value>\n' +
+          '</block>\n'
+        },
+        {
+          kind: "block",
+          blockxml: 
+            '    <block type="api_body" id="2">\n' +
+            '      <value name="BODY_NAME">\n' +
+            '      </value>\n' +
+            '      <value name="BODY_VALUE">\n' +
+            '      </value>\n' +
+            '    </block>\n' 
+        },
+        {
+          kind: "block",
+          blockxml: 
+            '    <block type="api_header" id="3">\n' +
+            '      <value name="HEADER_NAME">\n' +
+            '      </value>\n' +
+            '      <value name="HEADER_VALUE">\n' +
+            '      </value>\n' +
+            '    </block>\n' 
         },
       ],
     },
