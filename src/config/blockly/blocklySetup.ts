@@ -594,85 +594,98 @@ const blocklyToolbox = {
       name: "Web Service",
       colour: 290,
       contents: [
-        // {
-        //   kind: "block",
-        //   blockxml:
-        //     '    <block type="print_to_console">\n' +
-        //     '      <field name="Name">Boundary Function Name</field>\n' +
-        //     '      <statement name="Content">\n' +
-        //     '        <block type="text"></block>\n' +
-        //     '      </statement>\n' +
-        //     '    </block>\n',
-        // },
-        // {
-        //   kind: "block",
-        //   blockxml: 
-        //   '<block type="api_block" id="1" x="50" y="50">\n' +
-        //     '  <value name="API_URL">\n' +
-        //     '    <block type="text">\n' +
-        //     '      <field name="TEXT">https://api.example.com</field>\n' +
-        //     '    </block>\n' +
-        //     '  </value>\n' +
-        //     '  <statement name="API_PARAMETERS">\n' +
-        //     '    <block type="api_parameter" id="2">\n' +
-        //     '      <value name="PARAM_NAME">\n' +
-        //     '        <block type="text">\n' +
-        //     '          <field name="TEXT">param1</field>\n' +
-        //     '        </block>\n' +
-        //     '      </value>\n' +
-        //     '      <value name="PARAM_VALUE">\n' +
-        //     '        <block type="text">\n' +
-        //     '          <field name="TEXT">value1</field>\n' +
-        //     '        </block>\n' +
-        //     '      </value>\n' +
-        //     '    </block>\n' +
-        //     '  </statement>\n' +
-        //     '  <statement name="API_HEADERS">\n' +
-        //     '    <block type="api_header" id="3">\n' +
-        //     '      <value name="HEADER_NAME">\n' +
-        //     '        <block type="text">\n' +
-        //     '          <field name="TEXT">Authorization</field>\n' +
-        //     '        </block>\n' +
-        //     '      </value>\n' +
-        //     '      <value name="HEADER_VALUE">\n' +
-        //     '        <block type="text">\n' +
-        //     '          <field name="TEXT">Bearer Token123</field>\n' +
-        //     '        </block>\n' +
-        //     '      </value>\n' +
-        //     '    </block>\n' +
-        //     '  </statement>\n' +
-        //   '</block>\n'
-        // },
-        {
-          kind: "block",
-          blockxml: 
-          '<block type="api_block" id="1" x="50" y="50">\n' +
-            '  <value name="API_URL">\n' +
-            '  </value>\n' +
-            '  <value name="METHOD">\n' +
-            '  </value>\n' +
-          '</block>\n'
-        },
-        {
-          kind: "block",
-          blockxml: 
-            '    <block type="api_body" id="2">\n' +
-            '      <value name="BODY_NAME">\n' +
-            '      </value>\n' +
-            '      <value name="BODY_VALUE">\n' +
-            '      </value>\n' +
-            '    </block>\n' 
-        },
-        {
-          kind: "block",
-          blockxml: 
-            '    <block type="api_header" id="3">\n' +
-            '      <value name="HEADER_NAME">\n' +
-            '      </value>\n' +
-            '      <value name="HEADER_VALUE">\n' +
-            '      </value>\n' +
-            '    </block>\n' 
-        },
+          {
+            kind: "block",
+            blockxml: '<block type="api_block" id="1" x="50" y="50">\n' +
+              '  <value name="API_URL">\n' +
+              '  </value>\n' +
+              '  <value name="METHOD">\n' +
+              '  </value>\n' +
+              '  <value name="API_BODY">\n' +
+              '  </value>\n' +
+              '  <value name="API_HEADERS">\n' +
+              '  </value>\n' +
+              '</block>\n',
+          },
+          // {
+          //   kind: "block",
+          //   blockxml: '    <block type="api_body" id="2">\n' +
+          //     '      <value name="BODY_NAME">\n' +
+          //     '      </value>\n' +
+          //     '      <value name="VALUES">\n' +
+          //     '      </value>\n' +
+          //     '    </block>\n',
+          // },
+          // {
+          //   kind: "block",
+          //   blockxml: '<block type="api_body_array" id="4">\n' +
+          //     '  <value name="ARRAY_NAME">\n' +
+          //     '  </value>\n' +
+          //     '  <statement name="VALUES">\n' +
+          //     '  </statement>\n' +
+          //     '</block>\n',
+          // },
+          // {
+          //   kind: "block",
+          //   blockxml: '<block type="api_body_json" id="6">\n' +
+          //     '  <value name="JSON_NAME">\n' +
+          //     '  </value>\n' +
+          //     '  <statement name="VALUES">\n' +
+          //     '  </statement>\n' +
+          //     '</block>\n',
+          // },
+          // {
+          //   kind: "block",
+          //   blockxml: '    <block type="api_header" id="3">\n' +
+          //     '      <value name="HEADER_NAME">\n' +
+          //     '      </value>\n' +
+          //     '      <value name="HEADER_VALUE">\n' +
+          //     '      </value>\n' +
+          //     '    </block>\n',
+          // },
+          {
+            kind: "block",
+            blockxml: '    <block type="authorization_basic" id="5">\n' +
+              '      <value name="USERNAME">\n' +
+              '      </value>\n' +
+              '      <value name="PASSWORD">\n' +
+              '      </value>\n' +
+              '    </block>\n',
+          },
+          {
+            'kind': 'block',
+            'type': 'object'
+          },
+          {
+            'kind': 'block',
+            'type': 'member'
+          },
+          {
+            'kind': 'block',
+            'type': 'math_number'
+          },
+          {
+            'kind': 'block',
+            'type': 'text'
+          },
+          {
+            'kind': 'block',
+            'type': 'logic_boolean'
+          },
+          {
+            'kind': 'block',
+            'type': 'logic_null'
+          },
+          {
+            kind: "block",
+            blockxml:
+              '    <block type="lists_create_with">\n' +
+              '      <mutation items="0"></mutation>\n' +
+              "    </block>\n",
+          },
+        
+       
+        
       ],
     },
   ],
