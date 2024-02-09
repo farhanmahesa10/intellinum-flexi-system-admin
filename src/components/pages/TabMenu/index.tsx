@@ -10,6 +10,7 @@ import { FaDynamicIcons } from "../../atoms";
 import {
   BusinessEvent,
   CompanyVision,
+  Custom,
   EventHandler,
   EventLog,
   Workflow,
@@ -28,6 +29,8 @@ const TabMenu = (props: any) => {
   const callComponent = useCallback(
     (activeTab) => {
       switch (activeTab.split(" ").join("-").toLowerCase()) {
+        case "custom":
+          return <Custom />;
         case "company-vision":
           return <CompanyVision />;
         case "business-event":
@@ -87,6 +90,7 @@ const TabMenu = (props: any) => {
         style={{ padding: "0 16px" }}
         onTabClick={(active) => {
           setActiveTab(active);
+          console.log(active);
         }}
       >
         {menus.map((r: any, i: number) => {
