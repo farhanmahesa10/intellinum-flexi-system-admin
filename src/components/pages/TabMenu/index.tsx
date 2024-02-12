@@ -91,6 +91,7 @@ const TabMenu = (props: any) => {
         onTabClick={(active) => {
           setActiveTab(active);
           console.log(active);
+          props.location(active);
         }}
       >
         {menus.map((r: any, i: number) => {
