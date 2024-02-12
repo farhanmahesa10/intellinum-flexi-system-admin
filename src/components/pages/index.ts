@@ -1,3 +1,4 @@
 import TabMenu from "./TabMenu";
+import Custom from "./Custom";
 
-export { TabMenu };
+export { Custom, TabMenu };

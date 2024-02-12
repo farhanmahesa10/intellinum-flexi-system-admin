@@ -8,7 +8,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { TabMenu } from "./components/pages";
+import { Custom, TabMenu } from "./components/pages";
 import "./app.css";
 import Blockly from "./components/pages/Blockly";
 export default function Root(props) {
@@ -32,6 +32,7 @@ const App = () => {
           <Routes>
             <Route path="/system/:activetab" element={<TabMenu />} />
             <Route path="/system/blockly" element={<Blockly />} />
+            <Route path="/system/custom" element={<Custom />} />
           </Routes>
         </>
       }

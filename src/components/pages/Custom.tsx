@@ -1,8 +1,8 @@
 import { Select, Button, Form, Input, message, Space, Spin } from "antd";
 import { useState } from "react";
 import axios from "axios";
-import { callApi } from "../../../config/callApi";
-import { Config } from "../../../config/config";
+import { callApi } from "../../config/callApi";
+import { Config } from "../../config/config";
 
 const Custom = () => {
   const [loading, setLoading] = useState(false);
