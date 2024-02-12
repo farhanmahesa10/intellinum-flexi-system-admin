@@ -13,6 +13,7 @@ import {
   Custom,
   EventHandler,
   EventLog,
+  MqttOrg,
   Workflow,
 } from "../../organisms";
 type Props = {
@@ -41,6 +42,8 @@ const TabMenu = (props: any) => {
           return <EventHandler />;
         case "event-log":
           return <EventLog />;
+        case "mqtt":
+          return <MqttOrg />;
         default:
           return "";
       }
@@ -56,7 +59,7 @@ const TabMenu = (props: any) => {
       return {
         path: r.menu?.find((res: any, ind: number) => ind === 0)?.path || "/",
         icon: r.icon,
-        key: r.name.split(" ").join("-").toLowerCase(),
+        key: r.path.replace("/system/", "").toLowerCase(),
         label: (
           <span className="d-flex gap-2 align-items-center">
             {r.icon?.startsWith("/assets") ? (
@@ -73,7 +76,9 @@ const TabMenu = (props: any) => {
         ),
         children: (
           <>
-            <div>{callComponent(r.name)}</div>
+            <div>
+              {callComponent(r.path.replace("/system/", "").toLowerCase())}
+            </div>
           </>
         ),
       };
@@ -90,7 +95,6 @@ const TabMenu = (props: any) => {
         style={{ padding: "0 16px" }}
         onTabClick={(active) => {
           setActiveTab(active);
-          console.log(active);
           props.location(active);
         }}
       >
@@ -103,7 +107,7 @@ const TabMenu = (props: any) => {
                 backgroundColor: props.isDarkMode
                   ? themeToken.colorDark100
                   : "white",
-              }} // Set the background color here
+              }}
             >
               <div className="p-4">{r.children}</div>
             </TabPane>
