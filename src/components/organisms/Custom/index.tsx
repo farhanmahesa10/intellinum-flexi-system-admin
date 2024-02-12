@@ -1,4 +1,4 @@
-import { Select, Button, Form, Input, message, Space, Spin } from "antd";
+import { Select, Button, Form, Input, message, Space, Spin, Modal } from "antd";
 import { useState } from "react";
 import axios from "axios";
 import { callApi } from "../../../config/callApi";
@@ -11,15 +11,16 @@ const Custom = () => {
     Config.prefixUrl + "/integration/load_print"
   );
 
-  const onFinish = () => {
+  const onFinish = async (value) => {
     setLoading(true);
+    message.info("Validating...");
     const body = {
-      loadNumber: loadNumber,
+      loadNumber: value.loadNumber,
     };
-    callApi(apiUrl, "POST", body)
-      .then((res) => message.success("Success Print"))
+    await callApi(apiUrl, "POST", body)
+      .then((res) => message.success("Success"))
       .catch((error) => {
-        message.error("Something Wrong");
+        message.error(error.response.data.error, 7);
         console.log(error);
       });
     setLoading(false);
@@ -63,6 +64,7 @@ const Custom = () => {
               defaultValue={loadNumber}
               type="text"
               disabled={loading}
+              placeholder="Input Load Number"
             />
           </Form.Item>
           <Form.Item
