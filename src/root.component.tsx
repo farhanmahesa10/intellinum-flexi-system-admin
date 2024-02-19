@@ -12,6 +12,7 @@ import { TabMenu, MqttTopic, MqttRule } from "./components/pages";
 import "./app.css";
 import Blockly from "./components/pages/Blockly";
 import { useEffect, useState } from "react";
+import Custom from "./components/pages/Custom";
 
 export default function Root(props) {
   return (
@@ -92,6 +93,7 @@ const App = () => {
               element={<TabMenu location={showLocation} />}
             />
             <Route path="/system/blockly" element={<Blockly />} />
+            <Route path="/system/print" element={<Custom />} />
             <Route path="/system/mqtt-topic/:mqttId" element={<MqttTopic />} />
             <Route
               path="/system/mqtt-rule/:mqttTopicId"

@@ -10,7 +10,6 @@ import { FaDynamicIcons } from "../../atoms";
 import {
   BusinessEvent,
   CompanyVision,
-  Custom,
   EventHandler,
   EventLog,
   MqttOrg,
@@ -30,8 +29,6 @@ const TabMenu = (props: any) => {
   const callComponent = useCallback(
     (activeTab) => {
       switch (activeTab.split(" ").join("-").toLowerCase()) {
-        case "custom":
-          return <Custom />;
         case "company-vision":
           return <CompanyVision />;
         case "business-event":
