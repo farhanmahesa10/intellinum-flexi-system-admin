@@ -38,7 +38,7 @@ const Custom = () => {
       .nullable(),
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, setSubmitting) => {
     setLoading(true);
     message.info("Validating...");
     try {
@@ -51,10 +51,11 @@ const Custom = () => {
       await callApi(apiUrl, "POST", body);
       message.success("Success");
     } catch (error) {
-      message.error(error.response.data.error, 7);
+      message.error(error.response.data.message, 7);
       console.error(error);
     }
     setLoading(false);
+    setSubmitting(false);
   };
 
   const fetchPrinter = async () => {
@@ -83,7 +84,9 @@ const Custom = () => {
       copies: 0,
     },
     validationSchema: validationSchema,
-    onSubmit: handleSubmit,
+    onSubmit: (values, { setSubmitting }) => {
+      handleSubmit(values, setSubmitting);
+    },
   });
 
   return (
@@ -95,100 +98,91 @@ const Custom = () => {
         marginTop: "10px",
       }}
     >
-      {loading ? (
-        <div
-          className="flex justify-center my-6"
-          style={{ minHeight: "84vh", alignItems: "center" }}
+      <Form
+        name="basic"
+        wrapperCol={{ flex: 1 }}
+        labelCol={{ flex: "110px" }}
+        style={{ width: 600 }}
+        onFinish={formik.handleSubmit}
+      >
+        <Form.Item label="Load Number" name="loadNumber" required>
+          <Input
+            id="loadNumber"
+            disabled={loading}
+            {...formik.getFieldProps("loadNumber")}
+            placeholder="Input Load Number"
+            status={
+              formik.touched.loadNumber && formik.errors.loadNumber
+                ? "error"
+                : null
+            }
+          />
+          {formik.touched.loadNumber && formik.errors.loadNumber ? (
+            <Typography.Text type="danger">
+              {formik.errors.loadNumber}
+            </Typography.Text>
+          ) : null}
+        </Form.Item>
+        <Form.Item label="Printer Name" name="printerName" required>
+          <Select
+            id="printerName"
+            options={printerSelect}
+            disabled={loading}
+            onChange={(value) => formik.setFieldValue("printerName", value)}
+            value={formik.values.printerName}
+            placeholder="Select Printer Name"
+            status={
+              formik.touched.printerName && formik.errors.printerName
+                ? "error"
+                : null
+            }
+          />
+          {formik.touched.printerName && formik.errors.printerName ? (
+            <Typography.Text type="danger">
+              {formik.errors.printerName}
+            </Typography.Text>
+          ) : null}
+        </Form.Item>
+        <Form.Item label="Copies" name="copies" required>
+          <Input
+            id="copies"
+            type="number"
+            disabled={loading}
+            {...formik.getFieldProps("copies")}
+            placeholder="Input Copies Number"
+            status={
+              formik.touched.copies && formik.errors.copies ? "error" : null
+            }
+          />
+          {formik.touched.copies && formik.errors.copies ? (
+            <Typography.Text type="danger">
+              {formik.errors.copies}
+            </Typography.Text>
+          ) : null}
+        </Form.Item>
+        <Form.Item
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "16px",
+          }}
         >
-          <Spin size="large" />
-        </div>
-      ) : (
-        <Form
-          name="basic"
-          wrapperCol={{ flex: 1 }}
-          labelCol={{ flex: "110px" }}
-          style={{ width: 600 }}
-          onFinish={formik.handleSubmit}
-        >
-          <Form.Item label="Load Number" name="loadNumber" required>
-            <Input
-              id="loadNumber"
-              disabled={loading}
-              {...formik.getFieldProps("loadNumber")}
-              placeholder="Input Load Number"
-              status={
-                formik.touched.loadNumber && formik.errors.loadNumber
-                  ? "error"
-                  : null
-              }
-            />
-            {formik.touched.loadNumber && formik.errors.loadNumber ? (
-              <Typography.Text type="danger">
-                {formik.errors.loadNumber}
-              </Typography.Text>
-            ) : null}
-          </Form.Item>
-          <Form.Item label="Printer Name" name="printerName" required>
-            <Select
-              id="printerName"
-              options={printerSelect}
-              disabled={loading}
-              onChange={(value) => formik.setFieldValue("printerName", value)}
-              value={formik.values.printerName}
-              placeholder="Select Printer Name"
-              status={
-                formik.touched.printerName && formik.errors.printerName
-                  ? "error"
-                  : null
-              }
-            />
-            {formik.touched.printerName && formik.errors.printerName ? (
-              <Typography.Text type="danger">
-                {formik.errors.printerName}
-              </Typography.Text>
-            ) : null}
-          </Form.Item>
-          <Form.Item label="Copies" name="copies" required>
-            <Input
-              id="copies"
-              type="number"
-              disabled={loading}
-              {...formik.getFieldProps("copies")}
-              placeholder="Input Copies Number"
-              status={
-                formik.touched.copies && formik.errors.copies ? "error" : null
-              }
-            />
-            {formik.touched.copies && formik.errors.copies ? (
-              <Typography.Text type="danger">
-                {formik.errors.copies}
-              </Typography.Text>
-            ) : null}
-          </Form.Item>
-          <Form.Item
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: "16px",
-            }}
-          >
-            <Space size="middle">
-              <Button type="primary" htmlType="submit" disabled={loading}>
-                {!loading ? (
-                  <span className="indicator-label"> Print </span>
-                ) : (
-                  <span
-                    className="indicator-progress"
-                    style={{ display: "block" }}
-                  >
-                    Please wait...
-                  </span>
-                )}
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      )}
+          <Space size="middle">
+            <Button type="primary" htmlType="submit" disabled={loading}>
+              {!loading ? (
+                <span className="indicator-label"> Print </span>
+              ) : (
+                <span
+                  className="indicator-progress"
+                  style={{ display: "block" }}
+                >
+                  Please wait...
+                </span>
+              )}
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
     </div>
   );
 };
