@@ -58,6 +58,7 @@
     "@uiw/react-textarea-code-editor": "^2.1.9",
     "antd": "^5.11.3",
     "axios": "^1.6.7",
+    "crypto-js": "^4.2.0",
     "formik": "^2.4.5",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
