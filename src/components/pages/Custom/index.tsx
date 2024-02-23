@@ -65,8 +65,11 @@ const Custom = () => {
       await callApi(apiUrl, "POST", body);
       message.success("Success");
     } catch (error) {
-      message.error(error.response.data.message, 7);
-      console.error(error);
+      if (error.response?.data?.message !== undefined) {
+        message.error(error.response.data.message, 7);
+      } else {
+        message.error("Something Wrong", 7);
+      }
     }
     setLoading(false);
     setSubmitting(false);
