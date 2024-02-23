@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Select,
   Button,
@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import * as Buffer from "buffer";
 
 import { callApi } from "../../../config/callApi";
 import { Config } from "../../../config/config";
@@ -21,9 +22,15 @@ const Custom = () => {
   const [printerSelect, setPrinterSelect] = useState<
     { value: string; label: string }[]
   >([]);
-  const apiUrl = Config.prefixUrl + "/integration/load_print";
-  const apiUrlExpress =
-    Config.expressUrl + "/api/Rest/GetPrinter?AppUserName=admin%40odl.com";
+  const [apiUrl, setApiUrl] = useState(
+    Config.prefixUrl + "/integration/load_print"
+  );
+  const [apiUrlExpress, setApiUrlExpress] = useState(
+    Config.expressUrl + "/api/Rest/GetPrinter?AppUserName=admin%40odl.com"
+  );
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("flexa_auth"))
+  );
 
   useEffect(() => {
     fetchPrinter();
@@ -42,7 +49,14 @@ const Custom = () => {
     setLoading(true);
     message.info("Validating...");
     try {
+      const passwordUser = Buffer.Buffer.from(user.wmsPassword).toString(
+        "base64"
+      );
       const body = {
+        username: user.wmsUser,
+        password: passwordUser,
+        url: user.wmsUrl,
+        email: user.email,
         loadNumber: values.loadNumber,
         printerName: values.printerName,
         copies: values.copies,
