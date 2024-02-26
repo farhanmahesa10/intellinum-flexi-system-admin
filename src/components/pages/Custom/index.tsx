@@ -63,7 +63,7 @@ const Custom = () => {
       };
       console.log(body);
       await callApi(apiUrl, "POST", body);
-      message.success("Success");
+      message.success(`Load number ${values.loadNumber} printed successfully`);
     } catch (error) {
       if (error.response?.data?.message !== undefined) {
         message.error(error.response.data.message, 7);
