@@ -3,6 +3,7 @@ import {
   Card,
   Col,
   Collapse,
+  Empty,
   Input,
   Pagination,
   Row,
@@ -33,6 +34,9 @@ const EventHandler = (props: Props) => {
   const [searchUrl, setSearchUrl] = useState(
     Config.prefixUrl + "/messaging/businessevent/search"
   );
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("flexa_auth"))
+  );
 
   const [searchValue, setSearchValue] = useState("");
 
@@ -43,8 +47,7 @@ const EventHandler = (props: Props) => {
   const initData = useCallback(
     async (pageNumber = 1, size = 10) => {
       pageNumber = pageNumber - 1;
-      const user = JSON.parse(localStorage.getItem("flexa_auth"));
-      const { company } = user.company.id;
+      const company = user.company.id;
       setIsLoading(true);
       let url = "";
       if (searchValue) {
@@ -58,6 +61,7 @@ const EventHandler = (props: Props) => {
           company || "-1"
         }`;
       }
+      console.log(url);
       try {
         const result = await callApi(url, "GET");
         setActivePagination({
@@ -74,7 +78,6 @@ const EventHandler = (props: Props) => {
   );
 
   const handlePlay = useCallback(async (req) => {
-    const user = JSON.parse(localStorage.getItem("flexa_auth"));
     const company = user?.company?.id || "-1";
 
     setIsLoading(true);
@@ -151,16 +154,34 @@ const EventHandler = (props: Props) => {
               </Col>
             </Row>
           </div>
-          <Collapse
-            bordered={false}
-            expandIcon={({ isActive }) => (
-              <CaretRightOutlined rotate={isActive ? 90 : 0} className="mt-3" />
-            )}
-            // style={{
-            //   background: token.colorBgContainer,
-            // }}
-            items={items}
-          />
+          {dataSource.length === 0 ? (
+            <div
+              className="flex justify-center my-6"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div>
+                <Empty />
+              </div>
+            </div>
+          ) : (
+            <Collapse
+              bordered={false}
+              expandIcon={({ isActive }) => (
+                <CaretRightOutlined
+                  rotate={isActive ? 90 : 0}
+                  className="mt-3"
+                />
+              )}
+              // style={{
+              //   background: token.colorBgContainer,
+              // }}
+              items={items}
+            />
+          )}
 
           <div className="d-flex justify-content-end">
             <Pagination
