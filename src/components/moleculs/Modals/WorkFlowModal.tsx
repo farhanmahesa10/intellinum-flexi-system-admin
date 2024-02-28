@@ -20,6 +20,9 @@ const WorkflowModal = (props: Props) => {
   const { open, setOpen, formik, isLoading, mode } = props;
   const [xml, setXml] = useState("");
   const [showBlockly, setShowBlockly] = useState(false);
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("flexa_auth"))
+  );
 
   const handleWorkSpaceChange = (workspace) => {
     const code = javascriptGenerator.workspaceToCode(workspace);
@@ -77,25 +80,29 @@ const WorkflowModal = (props: Props) => {
                 ) : null}
               </Form.Item>
 
-              <Form.Item label="Company" required className="w-100 mb-0">
-                <CustomSelect
-                  apiUrl={Config.prefixUrl + "/common/company"}
-                  field={formik.getFieldProps("company")}
-                  form={formik}
-                  label="Company"
-                  status={
-                    formik.touched.company && formik.errors.company
-                      ? "error"
-                      : null
-                  }
-                />
-                {formik.touched.company && formik.errors.company ? (
-                  <p style={{ marginTop: "-20px", color: "#ff0000" }}>
-                    {" "}
-                    {formik.errors.company}
-                  </p>
-                ) : null}
-              </Form.Item>
+              {user.userType == "Admin" ? (
+                <Form.Item label="Company" required className="w-100 mb-0">
+                  <CustomSelect
+                    apiUrl={Config.prefixUrl + "/common/company"}
+                    field={formik.getFieldProps("company")}
+                    form={formik}
+                    label="Company"
+                    status={
+                      formik.touched.company && formik.errors.company
+                        ? "error"
+                        : null
+                    }
+                  />
+                  {formik.touched.company && formik.errors.company ? (
+                    <p style={{ marginTop: "-20px", color: "#ff0000" }}>
+                      {" "}
+                      {formik.errors.company}
+                    </p>
+                  ) : null}
+                </Form.Item>
+              ) : (
+                ""
+              )}
               <Form.Item label="Active" required className="w-100 mb-0">
                 <Switch
                   checked={formik.values.isActive}

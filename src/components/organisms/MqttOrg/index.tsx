@@ -96,7 +96,7 @@ const MqttOrg = () => {
         password: values.password,
         keepAlive: values.keepAlive,
         cleanSession: values.cleanSession,
-        company: values.company,
+        company: values.company == "" ? user.company.id : values.company,
         creationDate: new Date(),
         createdBy: user.id,
         updateDate: new Date(),

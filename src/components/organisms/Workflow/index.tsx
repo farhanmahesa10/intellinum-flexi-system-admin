@@ -9,6 +9,7 @@ import { useFormik } from "formik";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import * as Yup from "yup";
 import toast, { Toaster } from "react-hot-toast";
+import { valueContainerCSS } from "react-select/dist/declarations/src/components/containers";
 const { ModalDraggable, Config, callApi, TableAntd } = Utils;
 type Props = {};
 
@@ -25,6 +26,9 @@ const Workflow = (props: Props) => {
   );
   const [open, setOpen] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("flexa_auth"))
+  );
 
   const handleEdit = (value) => {
     formik.setFieldValue("xml", value.xml);
@@ -145,15 +149,28 @@ const Workflow = (props: Props) => {
   );
   const searchSection = "";
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required("This field is required"),
-    company: Yup.string().required("This field is required"),
-    script: Yup.string().required("This field is required"),
-  });
+  const validationSchema = () => {
+    let validation = Yup.object().shape({
+      name: Yup.string().required("This field is required"),
+      script: Yup.string().required("This field is required"),
+    });
+    if (user.userType == "Admin") {
+      validation = Yup.object().shape({
+        name: Yup.string().required("This field is required"),
+        script: Yup.string().required("This field is required"),
+        company: Yup.string().required("Company is required"),
+      });
+    }
+    return validation;
+  };
 
   const handleSubmit = useCallback(
     async (value, setSubmitting) => {
       setIsLoading(true);
+      value = {
+        ...value,
+        company: value.company == "" ? user.company.id : value.company,
+      };
       try {
         if (mode === "New") {
           await callApi(
