@@ -1,0 +1,11 @@
+.h-600{
+    height: 500px;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+.clickable:hover{
+    opacity: 0.8;
+}
