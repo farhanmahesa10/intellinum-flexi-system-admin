@@ -7,7 +7,7 @@ interface config {
 }
 
 export const Config: config = {
-  prefixUrl: "https://flexaservice-t1.intellinum.com:8672",
+  prefixUrl: localStorage.getItem("prefixUrl"),
   expressUrl: "https://expresslabel2.intellinum.com",
   theme: "light",
   language: "en",
