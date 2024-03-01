@@ -8,9 +8,9 @@ interface config {
 
 export const Config: config = {
   prefixUrl: "https://flexaservice-t1.intellinum.com:8672",
-  expressUrl: "https://expresslabel-test.intellinum.com",
+  expressUrl: "https://expresslabel2.intellinum.com",
   theme: "light",
   language: "en",
   token:
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJPRExfREVWIiwibmJmIjoxNzA1OTQzNTkyLCJleHAiOjIzMzcwOTU1OTIsImlhdCI6MTcwNTk0MzU5MiwiaXNzIjoiRXhwcmVzc0xhYmVsU2VydmVyIiwiYXVkIjoiRXhwcmVzc0xhYmVsQ2xpZW50In0.osTVyEh87_OVv6DkCt9bmED4rss96ZoWbOcCusfsOa8",
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJPREwtUFJPRCIsIm5iZiI6MTcwOTIzMTM0MiwiZXhwIjoyMzQwMzgzMzQyLCJpYXQiOjE3MDkyMzEzNDIsImlzcyI6IkV4cHJlc3NMYWJlbFNlcnZlciIsImF1ZCI6IkV4cHJlc3NMYWJlbENsaWVudCJ9.mB5RrnK6Yu12YODNQjpE6dytLAck9LZVmF7Cm6laqkE",
 };
