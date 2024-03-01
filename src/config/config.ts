@@ -7,7 +7,7 @@ interface config {
 }
 
 export const Config: config = {
-  prefixUrl: localStorage.getItem("prefixUrl"),
+  prefixUrl: localStorage.getItem("prefixUrlSystemAdmin"),
   expressUrl: "https://expresslabel2.intellinum.com",
   theme: "light",
   language: "en",
